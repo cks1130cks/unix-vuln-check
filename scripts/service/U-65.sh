@@ -2,57 +2,50 @@
 
 echo "U-65: 관리자(root)만 at.allow 파일과 at.deny 파일을 제어할 수 있는지 점검"
 
-at_allow_file="/etc/at.allow"
-at_deny_file="/etc/at.deny"
+# at.allow 및 at.deny 파일 경로
+at_allow="/etc/at.allow"
+at_deny="/etc/at.deny"
 
-secure=1
+at_command_protected=true
 
-# 1. at.allow 파일 점검
-if [ -f "$at_allow_file" ]; then
-    file_owner=$(stat -c %U "$at_allow_file")
-    file_permissions=$(stat -c %a "$at_allow_file")
-
-    if [ "$file_owner" == "root" ] && [ "$file_permissions" -le 640 ]; then
-        echo "  [양호] $at_allow_file: 소유자 root, 권한 640 이하"
+# at.allow가 존재할 경우 root만 등록되어 있어야 함
+if [ -f "$at_allow" ]; then
+    users=$(grep -v '^\s*$' "$at_allow" | sort | uniq)
+    if [[ "$users" == "root" ]]; then
+        echo "  [양호] at.allow 파일에 root만 등록되어 있습니다."
     else
-        echo "  [취약] $at_allow_file: 소유자 또는 권한 설정이 적절하지 않음"
-        secure=0
+        echo "  [취약] at.allow 파일에 root 외 사용자가 포함되어 있습니다."
+        at_command_protected=false
     fi
 else
-    echo "  [취약] $at_allow_file 파일이 존재하지 않음"
-    secure=0
+    echo "  [취약] at.allow 파일이 존재하지 않아 일반 사용자도 at 명령어 사용이 가능합니다."
+    at_command_protected=false
 fi
 
-# 2. at.deny 파일 점검
-if [ -f "$at_deny_file" ]; then
-    file_owner=$(stat -c %U "$at_deny_file")
-    file_permissions=$(stat -c %a "$at_deny_file")
-
-    if [ "$file_owner" == "root" ] && [ "$file_permissions" -le 640 ]; then
-        echo "  [양호] $at_deny_file: 소유자 root, 권한 640 이하"
+# at.allow 및 at.deny 파일 권한/소유자 점검 함수
+check_file() {
+    file=$1
+    if [ -f "$file" ]; then
+        owner=$(stat -c %U "$file")
+        perms=$(stat -c %a "$file")
+        if [ "$owner" == "root" ] && [ "$perms" -le 640 ]; then
+            echo "  [양호] $file 파일의 소유자가 root이고, 권한이 640 이하입니다."
+        else
+            echo "  [취약] $file 파일의 소유자가 root가 아니거나 권한이 640 초과입니다."
+            at_command_protected=false
+        fi
     else
-        echo "  [취약] $at_deny_file: 소유자 또는 권한 설정이 적절하지 않음"
-        secure=0
+        echo "  [정보] $file 파일이 존재하지 않습니다."
     fi
-else
-    echo "  [취약] $at_deny_file 파일이 존재하지 않음"
-    secure=0
-fi
+}
 
-# 3. 일반 사용자의 at 명령어 사용 가능 여부 확인
-# 예시 사용자 지정 (root가 아닌 사용자로 확인)
-test_user="nobody"
+# at.allow, at.deny 각각 점검
+check_file "$at_allow"
+check_file "$at_deny"
 
-if su -s /bin/bash -c "at -l" "$test_user" 2>/dev/null | grep -q "no jobs"; then
-    echo "  [취약] 일반 사용자($test_user)가 at 명령어를 사용할 수 있습니다."
-    secure=0
+# 최종 평가
+if [ "$at_command_protected" = true ]; then
+    echo "  [최종 판정: 양호] at 명령어가 일반 사용자에게 금지되어 있고, 관련 파일의 권한 설정도 적절합니다."
 else
-    echo "  [양호] 일반 사용자($test_user)는 at 명령어를 사용할 수 없습니다."
-fi
-
-# 최종 결과
-if [ "$secure" -eq 1 ]; then
-    echo "  [최종 결과: 양호] at 명령 제한 및 관련 파일 설정이 적절합니다."
-else
-    echo "  [최종 결과: 취약] at 명령 제한 또는 파일 설정에 보안 취약점이 존재합니다."
+    echo "  [최종 판정: 취약] at 명령어를 일반 사용자가 사용할 수 있거나, 관련 파일의 권한 설정이 미흡합니다."
 fi
