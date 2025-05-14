@@ -1,4 +1,8 @@
 #!/bin/bash
-echo "[U-40] 점검 스크립트"
-echo "※ 이 항목의 세부 점검 로직은 실제 점검 기준에 따라 작성되어야 합니다."
-echo "결과: 수동 점검 필요 또는 스크립트 로직 추가 필요"
+echo "[U-40] 웹서비스 파일 업로드 및 다운로드 제한"
+CONF="/etc/httpd/conf/httpd.conf"
+if grep -qE "AddHandler.*cgi-script" $CONF && grep -q "AllowOverride None" $CONF; then
+    echo "결과: 취약 (업로드 및 다운로드 제한 설정 미흡)"
+else
+    echo "결과: 양호 (적절한 업로드/다운로드 제한 설정 존재)"
+fi

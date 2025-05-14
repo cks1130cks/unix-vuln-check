@@ -1,4 +1,8 @@
 #!/bin/bash
-echo "[U-44] 점검 스크립트"
-echo "※ 이 항목의 세부 점검 로직은 실제 점검 기준에 따라 작성되어야 합니다."
-echo "결과: 수동 점검 필요 또는 스크립트 로직 추가 필요"
+echo "[U-44] root 이외의 UID가 0인 계정 존재 여부"
+ROOTLIKE_USERS=$(awk -F: '$3 == 0 && $1 != "root" {print $1}' /etc/passwd)
+if [ -n "$ROOTLIKE_USERS" ]; then
+    echo "결과: 취약 (root 외 UID=0 계정 존재: $ROOTLIKE_USERS)"
+else
+    echo "결과: 양호 (root 외 UID=0 계정 없음)"
+fi

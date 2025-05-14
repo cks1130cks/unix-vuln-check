@@ -1,4 +1,10 @@
 #!/bin/bash
-echo "[U-49] 점검 스크립트"
-echo "※ 이 항목의 세부 점검 로직은 실제 점검 기준에 따라 작성되어야 합니다."
-echo "결과: 수동 점검 필요 또는 스크립트 로직 추가 필요"
+echo "[U-49] 불필요한 계정 제거"
+EXTRA_USERS=$(awk -F: '$3 >= 1000 && $1 != "nobody" && $7 != "/sbin/nologin" && $7 != "/bin/false"' /etc/passwd)
+if [ -n "$EXTRA_USERS" ]; then
+    echo "경고: 다음 사용자 계정이 존재합니다:"
+    echo "$EXTRA_USERS"
+    echo "결과: 취약 (불필요한 계정 존재 가능)"
+else
+    echo "결과: 양호 (불필요한 계정 없음)"
+fi

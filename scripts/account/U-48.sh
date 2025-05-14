@@ -1,4 +1,7 @@
 #!/bin/bash
-echo "[U-48] 점검 스크립트"
-echo "※ 이 항목의 세부 점검 로직은 실제 점검 기준에 따라 작성되어야 합니다."
-echo "결과: 수동 점검 필요 또는 스크립트 로직 추가 필요"
+echo "[U-48] 패스워드 최소 사용기간 설정"
+if grep -q '^PASS_MIN_DAYS[[:space:]]\+[1-9]' /etc/login.defs; then
+    echo "결과: 양호 (최소 사용기간 1일 이상으로 설정됨)"
+else
+    echo "결과: 취약 (최소 사용기간 미설정 또는 0)"
+fi
