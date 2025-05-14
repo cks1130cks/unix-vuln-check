@@ -6,7 +6,9 @@ BASE_DIR="./scripts"
 # 스크립트 실행 함수
 run_scripts_in_dir() {
     local dir="$1"
+    echo "====================="
     echo ">> [$dir] 디렉토리의 스크립트 실행 중..."
+    echo "====================="
 
     for script in "$dir"/*.sh; do
         if [ -f "$script" ]; then
