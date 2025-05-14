@@ -5,7 +5,7 @@ vulnerable_ports=$(netstat -tulnp 2>/dev/null | grep -E '0\.0\.0\.0|:::' | awk '
 
 if [ -n "$vulnerable_ports" ]; then
     echo "  [취약] 다음 포트들이 모든 IP에 바인딩되어 있습니다:"
-    echo "  $vulnerable_ports"
+    echo " $vulnerable_ports"
 else
     echo "  [양호] 모든 포트가 특정 IP에 바인딩되어 있습니다."
 fi
