@@ -6,9 +6,9 @@ for dir in /home/*; do
     owner=$(stat -c %U "$dir")
     perms=$(stat -c %a "$dir")
     if [ "$owner" != "$user" ] || [ "$perms" -gt 750 ]; then
-        echo "$dir → 소유자:$owner, 권한:$perms (문제 있음)"
+        echo "  $dir → 소유자:$owner, 권한:$perms (문제 있음)"
         result="취약"
     fi
 done
-echo "결과: $result"
+echo "  [$result]"
 echo
