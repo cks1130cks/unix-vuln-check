@@ -10,30 +10,31 @@ else
 fi
 
 # Telnet 서비스의 로그인 메시지 확인
-if [ -f "/etc/issue" ]; then
-    echo "  [양호] /etc/issue 파일에 Telnet 로그인 메시지가 설정되어 있습니다."
+if [ -f "/etc/issue.net" ]; then
+    echo "  [양호] /etc/issue.net 파일에 Telnet 로그인 메시지가 설정되어 있습니다."
 else
-    echo "  [취약] /etc/issue 파일에 Telnet 로그인 메시지가 설정되어 있지 않습니다."
+    echo "  [취약] /etc/issue.net 파일에 Telnet 로그인 메시지가 설정되어 있지 않습니다."
 fi
 
 # FTP 서비스의 로그인 메시지 확인
-if [ -f "/etc/ftpd/ftpd_banner" ]; then
-    echo "  [양호] /etc/ftpd/ftpd_banner 파일에 FTP 로그인 메시지가 설정되어 있습니다."
+if [ -f "/etc/vsftpd/vsftpd.conf" ] && grep -q "ftpd_banner" "/etc/vsftpd/vsftpd.conf"; then
+    echo "  [양호] /etc/vsftpd/vsftpd.conf 파일에 FTP 로그인 메시지가 설정되어 있습니다."
 else
-    echo "  [취약] /etc/ftpd/ftpd_banner 파일에 FTP 로그인 메시지가 설정되어 있지 않습니다."
+    echo "  [취약] /etc/vsftpd/vsftpd.conf 파일에 FTP 로그인 메시지가 설정되어 있지 않습니다."
 fi
 
-# SMTP 서비스의 로그인 메시지 확인 (보통 /etc/mail/banner 또는 /etc/issue 확인)
-if [ -f "/etc/mail/banner" ]; then
-    echo "  [양호] /etc/mail/banner 파일에 SMTP 로그인 메시지가 설정되어 있습니다."
+# SMTP 서비스의 로그인 메시지 확인
+if [ -f "/etc/mail/sendmail.cf" ] && grep -q "O Smtp GreetingMessage" "/etc/mail/sendmail.cf"; then
+    echo "  [양호] /etc/mail/sendmail.cf 파일에 SMTP 로그인 메시지가 설정되어 있습니다."
 else
-    echo "  [취약] /etc/mail/banner 파일에 SMTP 로그인 메시지가 설정되어 있지 않습니다."
+    echo "  [취약] /etc/mail/sendmail.cf 파일에 SMTP 로그인 메시지가 설정되어 있지 않습니다."
 fi
 
-# DNS 서비스의 로그인 메시지 확인 (서비스 로그에서 직접 확인 필요)
-# 예시: Bind DNS의 경우 /etc/bind/named.conf 또는 /etc/issue에 설정 가능
-if [ -f "/etc/bind/named.conf" ]; then
-    echo "  [양호] DNS 서비스에 로그인 메시지가 설정되어 있습니다."
+# DNS 서비스의 로그인 메시지 확인
+if [ -f "/etc/named.conf" ]; then
+    echo "  [양호] /etc/named.conf 파일에 DNS 로그인 메시지가 설정되어 있습니다."
+elif [ -f "/etc/bind/named.conf" ]; then
+    echo "  [양호] /etc/bind/named.conf 파일에 DNS 로그인 메시지가 설정되어 있습니다."
 else
     echo "  [취약] DNS 서비스에 로그인 메시지가 설정되어 있지 않습니다."
 fi
