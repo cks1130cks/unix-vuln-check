@@ -1,4 +1,4 @@
-echo "===== U-56: UMASK 설정 ====="
+echo "U-56: UMASK 설정"
 umask_value=$(grep -i 'umask' /etc/profile)
 
 if [[ "$umask_value" =~ "umask 022" ]]; then

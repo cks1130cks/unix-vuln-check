@@ -1,4 +1,4 @@
-echo "===== U-55: hosts.lpd 파일 소유자 및 권한 설정 ====="
+echo "U-55: hosts.lpd 파일 소유자 및 권한 설정"
 file="/etc/hosts.lpd"
 if [ -e "$file" ]; then
     owner=$(stat -c %U "$file")

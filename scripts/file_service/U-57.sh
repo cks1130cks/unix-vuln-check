@@ -1,4 +1,4 @@
-echo "===== U-57: 홈 디렉토리 소유자 및 권한 설정 ====="
+echo "U-57: 홈 디렉토리 소유자 및 권한 설정"
 result="양호"
 for dir in /home/*; do
     [ -d "$dir" ] || continue
