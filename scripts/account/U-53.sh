@@ -6,4 +6,3 @@ if [ -n "$issues" ]; then
 else
     echo "  [양호]"
 fi
-echo

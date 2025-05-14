@@ -7,4 +7,3 @@ for gid in $(cut -d: -f4 /etc/passwd); do
     fi
 done
 echo "  [$result]"
-echo

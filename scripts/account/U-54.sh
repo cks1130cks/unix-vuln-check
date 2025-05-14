@@ -7,4 +7,3 @@ else
     echo "  TMOUT 설정값: $tmout"
     echo "  [취약]"
 fi
-echo

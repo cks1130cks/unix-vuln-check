@@ -12,4 +12,3 @@ if [ -e "$file" ]; then
 else
     echo "  [양호] 파일 없음"
 fi
-echo

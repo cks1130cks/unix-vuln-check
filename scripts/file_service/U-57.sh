@@ -11,4 +11,3 @@ for dir in /home/*; do
     fi
 done
 echo "  [$result]"
-echo
