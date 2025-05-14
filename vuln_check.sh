@@ -10,7 +10,6 @@ run_scripts_in_dir() {
 
     for script in "$dir"/*.sh; do
         if [ -f "$script" ]; then
-            echo "▶ 실행: $script"
             bash "$script"
         fi
     done
