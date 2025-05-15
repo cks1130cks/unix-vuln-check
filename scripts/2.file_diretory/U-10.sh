@@ -1,25 +1,102 @@
 #!/bin/bash
 
-FILE="/etc/xinetd.conf"
+# 로그 파일 정의
+LOG=check.log
+RESULT=result.log
+> $LOG
+> $RESULT
 
-echo "U-10: /etc/xinetd.conf 파일 권한 및 소유자 점검"
+# 상태 출력 함수들
 
-# 파일 존재 여부 확인
-if [ -f "$FILE" ]; then
-    PERM=$(stat -c "%a" "$FILE")
-    OWNER=$(stat -c "%U" "$FILE")
-    GROUP=$(stat -c "%G" "$FILE")
+# 바 형태의 구분선 출력
+BAR() {
+    echo "========================================================================" >> $RESULT
+}
 
-    echo "   파일 존재 확인: $FILE"
-    echo "   현재 권한: $PERM, 소유자: $OWNER, 그룹: $GROUP"
+# 코드 상태 출력 함수
+CODE(){
+    echo -e '\033[36m'$*'\033[0m'
+} >> $RESULT
 
-    # 권한 및 소유자 점검
-    if [[ "$PERM" -le 600 && "$OWNER" == "root" && "$GROUP" == "root" ]]; then
-        echo "  [양호] 권한과 소유자 설정이 적절합니다."
-    else
-        echo "  [취약] 권한 또는 소유자 설정이 적절하지 않습니다."
-        echo "     └ 권장 설정: 소유자 root, 권한 600"
+# 정보 상태 출력 함수
+INFO() {
+    echo -e '\033[35m'"[ 정보 ] : $*"'\033[0m'
+} >> $RESULT
+
+# 경고 상태 출력 함수
+WARN() {
+    echo -e '\033[31m'"[ 취약 ] : $*"'\033[0m'
+} >> $RESULT
+
+# 양호 상태 출력 함수
+OK() {
+    echo -e '\033[32m'"[ 양호 ] : $*"'\033[0m'
+} >> $RESULT
+
+# 스크립트 이름 추출 함수
+SCRIPTNAME() {
+    basename $0 | awk -F. '{print $1}'
+}
+
+# 권한 체크 함수
+check_perm() {
+    FILE=$1
+    PERM=$2
+    PERM_DESC=$3
+    FILEUSER=$4
+
+    if [ ! -f $FILE ]; then
+        echo "[ WARN ] : $FILE 파일이 존재하지 않습니다." >> $RESULT
+        return
     fi
-else
-    echo "  [정보] $FILE 파일이 존재하지 않습니다. (xinetd 미사용 시스템일 수 있음)"
-fi
+
+    # 파일 소유자와 권한을 확인
+    FILE_PERM=$(stat -c %a $FILE)
+    FILE_OWNER=$(stat -c %U $FILE)
+
+    # 권한이 맞는지, 소유자가 맞는지 확인
+    if [ "$FILE_OWNER" != "$FILEUSER" ]; then
+        echo "[ WARN ] : $FILE 소유자가 $FILEUSER가 아닙니다. 현재 소유자: $FILE_OWNER" >> $RESULT
+    fi
+
+    if [ "$FILE_PERM" != "$PERM" ]; then
+        echo "[ WARN ] : $FILE 권한이 $PERM ($PERM_DESC)가 아닙니다. 현재 권한: $FILE_PERM" >> $RESULT
+    fi
+
+    # 모든 것이 양호하면 OK 메시지 출력
+    if [ "$FILE_OWNER" == "$FILEUSER" ] && [ "$FILE_PERM" == "$PERM" ]; then
+        echo "[ OK ] : $FILE 권한과 소유자가 양호합니다." >> $RESULT
+    fi
+}
+
+# 실행 시작 부분
+TMP1=$(SCRIPTNAME).log
+
+> $TMP1
+
+# 결과 출력 부분 시작
+BAR
+
+CODE [U-21] /etc/xinetd.conf 파일 소유자 및 권한 설정
+
+cat << EOF >> $RESULT
+[양호]: /etc/xinetd.conf 파일의 소유자가 root이고, 권한이 600인 경우
+[취약]: /etc/xinetd.conf 파일의 소유자가 root가 아니거나, 권한이 600이 아닌경우
+EOF
+
+BAR
+
+# 점검할 파일 및 설정
+FILE=/etc/xinetd.conf
+PERM1=600
+PERM2=rw-------
+
+FILEUSER=root
+
+# 권한 점검 함수 호출
+check_perm $FILE $PERM1 $PERM2 $FILEUSER
+
+# 결과 출력
+cat $RESULT
+echo ; echo
+

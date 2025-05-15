@@ -1,12 +1,12 @@
 #!/bin/bash
 
-echo "U-06: 소유자 없는 파일 점검"
+echo "U-06: 파일 및 디렉토리 소유자 설정"
 
-orphan_files=$(find / \( -nouser -o -nogroup \) -print 2>/dev/null)
+# 소유자나 그룹이 없는 파일 찾기
+RESULT=$(find / \( -nouser -o -nogroup \) -ls 2>/dev/null)
 
-if [ -n "$orphan_files" ]; then
-    echo "  [취약] 소유자 없는 파일 존재:"
-    echo "$orphan_files"
+if [ -n "$RESULT" ]; then
+  echo "  [취약] (소유자가 존재하지 않은 파일 및 디렉토리가 있습니다.)"
 else
-    echo "  [양호] 소유자 없는 파일 없음."
+  echo "  [양호] (소유자가 존재하지 않은 파일 및 디렉토리가 없습니다.)"
 fi
