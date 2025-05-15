@@ -8,7 +8,7 @@ log_dir="/var/log"
 
 # 로깅 정책이 설정되어 있는지 확인 (rsyslog 설정 확인)
 if [ -f "$log_config_file" ]; then
-    echo "  로깅 설정 파일 ($log_config_file) 존재"
+    echo "  ▷ 로깅 설정 파일 ($log_config_file) 존재"
 
     # 주요 로그 파일 존재 여부 확인 (예: /var/log/auth.log, /var/log/syslog, /var/log/messages)
     if [ -f "$log_dir/auth.log" ] && [ -f "$log_dir/syslog" ] && [ -f "$log_dir/messages" ]; then
@@ -19,7 +19,7 @@ if [ -f "$log_config_file" ]; then
 
     # 로그 정책 문서 또는 관련 지침이 존재하는지 확인 (파일이나 디렉토리 점검)
     if [ -f "/etc/logrotate.conf" ]; then
-        echo "  로그 회전 정책 파일 존재"
+        echo "  ▷ 로그 회전 정책 파일 존재"
     else
         echo "  [취약] 로그 회전 정책 파일이 존재하지 않습니다."
     fi
