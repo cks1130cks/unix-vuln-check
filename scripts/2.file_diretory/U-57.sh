@@ -1,8 +1,7 @@
 #!/bin/bash
 
 echo "U-57: 홈 디렉토리 소유자 및 권한 설정 점검"
-
-echo "  점검 대상: /home 내 사용자 홈 디렉토리 소유자 및 권한 설정"
+echo "  점검 대상: /home 내 사용자 홈 디렉토리"
 
 result="양호"
 
@@ -13,7 +12,7 @@ for dir in /home/*; do
     perms=$(stat -c %a "$dir")
     others_write=$(( (perms % 10) & 2 ))
 
-    echo "  점검 대상 디렉토리: $dir"
+    echo "  점검 파일: $dir"
     echo "    현재 소유자: $owner"
     echo "    현재 권한: $perms"
 
