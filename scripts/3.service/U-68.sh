@@ -9,12 +9,12 @@ check_msg_in_file() {
 
     if [ -f "$file" ]; then
         if grep -qF "$EXPECTED_MSG" "$file"; then
-            echo "[양호] $description ($file)에 경고 메시지가 설정되어 있습니다."
+            echo "  [양호] $description ($file)에 경고 메시지가 설정되어 있습니다."
         else
-            echo "[취약] $description ($file)에 경고 메시지가 없습니다."
+            echo "  [취약] $description ($file)에 경고 메시지가 없습니다."
         fi
     else
-        echo "[정보] $description ($file) 파일이 존재하지 않습니다."
+        echo "  [정보] $description ($file) 파일이 존재하지 않습니다."
     fi
 }
 
