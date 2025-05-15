@@ -27,7 +27,6 @@ for file in "${FILES[@]}"; do
   fi
 done
 
-echo
 
 # crontab 실행파일 권한 점검
 CRONTAB_BIN="/usr/bin/crontab"
