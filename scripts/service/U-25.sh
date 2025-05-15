@@ -1,12 +1,12 @@
 #!/bin/bash
-echo "U-25: 장기간 미사용 계정 점검"
-
-# 마지막 로그인 기록이 없는 계정 추출 (lastlog 기준)
-INACTIVE_USERS=$(lastlog | awk '$4=="**Never" && $1 != "Username" {print $1}')
-
-if [ -n "$INACTIVE_USERS" ]; then
-    echo "  [취약] 장기간 미사용 계정 존재:"
-    echo "    $INACTIVE_USERS"
+echo "[U-25] NFS 접근 통제 설정"
+FILE="/etc/exports"
+if [ -f "$FILE" ]; then
+  if grep -Eqv 'root|rw|ro|no_root_squash' "$FILE"; then
+    echo "결과: 취약 (적절한 접근 통제 설정 없음)"
+  else
+    echo "결과: 양호 ($FILE에 적절한 접근 통제 설정)"
+  fi
 else
-    echo "  [양호] 장기간 미사용 계정이 존재하지 않음"
+  echo "결과: 양호 ($FILE 파일 없음)"
 fi

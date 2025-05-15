@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "U-70: SMTP 서비스 사용 시 vrfy, expn 명령어 사용 금지 설정 여부 점검"
+echo "U-70: expn, vrfy 명령어 제한"
 
 # SMTP 서비스가 활성화 되어 있는지 확인
 if systemctl is-active --quiet postfix; then

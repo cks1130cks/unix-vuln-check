@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "U-69: NFS 접근제어 설정파일에 대한 비인가자들의 수정 제한 여부 점검"
+echo "U-69: NFS 설정파일 접근 제한"
 
 # NFS 접근 제어 설정 파일 경로
 nfs_config_file="/etc/exports"

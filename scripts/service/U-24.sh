@@ -1,12 +1,9 @@
 #!/bin/bash
-echo "U-24: 시스템 계정의 로그인 쉘 제한 점검"
-
-# UID가 1000 미만이며 root가 아니고, 쉘이 /sbin/nologin 또는 /bin/false가 아닌 계정 찾기
-invalid_shell_users=$(awk -F: '($3 < 1000 && $1 != "root" && $7 != "/sbin/nologin" && $7 != "/bin/false") {print $1}' /etc/passwd)
-
-if [ -z "$invalid_shell_users" ]; then
-    echo "  [양호] 시스템 계정에 로그인 쉘이 적절히 제한됨"
+echo "[U-24] NFS 서비스 비활성화"
+ps -ef | grep -E "nfs|statd|lockd" | grep -v grep > /tmp/u24_nfs_check.txt
+if [ -s /tmp/u24_nfs_check.txt ]; then
+  echo "결과: 취약 (NFS 관련 데몬 실행 중)"
+  cat /tmp/u24_nfs_check.txt
 else
-    echo "  [취약] 로그인 쉘이 제한되지 않은 시스템 계정 존재: "
-    echo "$invalid_shell_users"
+  echo "결과: 양호 (NFS 관련 데몬 실행 안됨)"
 fi

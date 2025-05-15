@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "U-71: 웹페이지에서 오류 발생 시 출력되는 메시지 내용 점검"
+echo "U-71: Apache 웹 서비스 정보 숨김"
 
 # Apache 설정 파일 경로
 apache_config_file="/etc/httpd/conf/httpd.conf"

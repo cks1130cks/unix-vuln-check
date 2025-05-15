@@ -1,11 +1,14 @@
 #!/bin/bash
-echo "U-22: root 이외의 UID 0 계정 존재 여부 점검"
-
-# UID 0이면서 계정명이 root가 아닌 사용자 검색
-ROOTLIKE=$(awk -F: '$3 == 0 && $1 != "root" {print $1}' /etc/passwd)
-
-if [ -z "$ROOTLIKE" ]; then
-    echo "  [양호] UID 0 계정은 root 하나뿐임"
-else
-    echo "  [취약] root 외 UID 0 계정 존재: $ROOTLIKE"
-fi
+echo "[U-22] cron 관련 파일 소유자 및 권한 설정 점검"
+FILES=("/etc/crontab" "/etc/cron.allow" "/etc/cron.deny")
+for file in "${FILES[@]}"; do
+  if [ -e "$file" ]; then
+    PERM=$(stat -c %a "$file")
+    OWNER=$(stat -c %U "$file")
+    if [ "$OWNER" = "root" ] && [ "$PERM" -le 644 ]; then
+      echo "양호: $file (소유자: $OWNER, 권한: $PERM)"
+    else
+      echo "취약: $file (소유자: $OWNER, 권한: $PERM)"
+    fi
+  fi
+done

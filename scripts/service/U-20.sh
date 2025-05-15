@@ -1,9 +1,7 @@
 #!/bin/bash
-echo "U-20: 패스워드 파일 권한 설정 점검"
-
-# /etc/passwd 권한 확인 (644 이하인지)
-if [ "$(stat -c %a /etc/passwd)" -le 644 ]; then
-    echo "  [양호] /etc/passwd 파일 권한이 적절함"
+echo "[U-20] Anonymous FTP 비활성화"
+if grep -i "anonymous" /etc/vsftpd/ftpusers 2>/dev/null | grep -qv '^#'; then
+  echo "결과: 양호 (anonymous 계정이 차단됨)"
 else
-    echo "  [취약] /etc/passwd 파일 권한이 과도함"
+  echo "결과: 취약 (anonymous 계정 차단 설정이 없음 또는 주석 처리됨)"
 fi
