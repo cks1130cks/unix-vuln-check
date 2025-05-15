@@ -2,7 +2,7 @@
 
 FILE="/etc/xinetd.conf"
 
-echo "U-20: /etc/xinetd.conf 파일 권한 및 소유자 점검"
+echo "U-10: /etc/xinetd.conf 파일 권한 및 소유자 점검"
 
 # 파일 존재 여부 확인
 if [ -f "$FILE" ]; then
