@@ -6,4 +6,3 @@ if [ "$root_users" = "root" ] || [ -z "$root_users" ]; then
 else
     echo "  [취약]"
 fi
-echo
