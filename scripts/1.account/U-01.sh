@@ -5,10 +5,11 @@ SSHD_CONFIG="/etc/ssh/sshd_config"
 
 SSH_STATUS=$(systemctl is-active sshd)
 
+
+
 if [ "$SSH_STATUS" = "active" ]; then
   if [ -f "$SSHD_CONFIG" ]; then
     PERMIT_SETTING=$(grep -i "^PermitRootLogin" "$SSHD_CONFIG")
-
     if [[ "$PERMIT_SETTING" =~ [Yy][Ee][Ss] ]]; then
       echo "  [취약] (root 계정의 원격 접속이 허용되어 있음: $PERMIT_SETTING)"
     elif [[ "$PERMIT_SETTING" =~ [Nn][Oo] ]]; then
