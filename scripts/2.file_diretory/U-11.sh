@@ -3,7 +3,7 @@
 echo "U-11: /etc/rsyslog.conf 파일 소유자 및 권한 설정 점검"
 
 FILE=/etc/rsyslog.conf
-PERM_EXPECTED=644
+PERM_EXPECTED=640
 OWNER_EXPECTED="root"
 
 if [ ! -f "$FILE" ]; then
@@ -24,7 +24,7 @@ if [ "$FILE_OWNER" != "$OWNER_EXPECTED" ]; then
   echo "         보안을 위해 소유자를 root로 변경할 것을 권장합니다."
 elif [ "$FILE_PERM" != "$PERM_EXPECTED" ]; then
   echo "  [취약] 파일 권한이 $PERM_EXPECTED 가 아닙니다."
-  echo "         권한을 644로 설정하는 것이 보안상 적절합니다."
+  echo "         권한을 640로 설정하는 것이 보안상 적절합니다."
 else
   echo "  [양호] 파일 소유자와 권한이 적절히 설정되어 있습니다."
 fi
