@@ -12,35 +12,34 @@ ftp_files=(
     "/etc/vsftpd.user_list"
 )
 
-# 점검 수행
 vulnerable=0
+found=0
 
 for file in "${ftp_files[@]}"; do
     if [ -f "$file" ]; then
+        found=1
         owner=$(stat -c %U "$file")
         perm=$(stat -c %a "$file")
 
         echo "  ▷ 파일 확인: $file"
+        echo "    - 소유자: $owner"
+        echo "    - 권한: $perm"
+
         if [ "$owner" = "root" ] && [ "$perm" -le 640 ]; then
-            echo "    [양호] 소유자: $owner, 권한: $perm (조건 만족)"
+            echo "    [양호] 소유자가 root이고 권한이 640 이하로 적절히 설정되어 있습니다."
         else
-            echo "    [취약] 소유자: $owner, 권한: $perm (소유자를 root로 설정하고 권한을 640 이하로 조정해야 합니다)"
+            echo "    [취약] 소유자가 root가 아니거나 권한이 640보다 높게 설정되어 있습니다."
+            echo "         (소유자를 root로 설정하고 권한을 640 이하로 조정해야 합니다)"
             vulnerable=1
         fi
     fi
 done
 
-# 접근제어 파일이 아예 존재하지 않을 경우도 취약 처리
-if [ $vulnerable -eq 0 ]; then
-    found=0
-    for file in "${ftp_files[@]}"; do
-        if [ -f "$file" ]; then
-            found=1
-            break
-        fi
-    done
+if [ $found -eq 0 ]; then
+    echo "  [취약] 접근제어 파일이 하나도 존재하지 않습니다. FTP 설정을 확인하십시오."
+    vulnerable=1
+fi
 
-    if [ $found -eq 0 ]; then
-        echo "  [취약] 접근제어 파일이 하나도 존재하지 않습니다. FTP 설정을 확인하십시오."
-    fi
+if [ $vulnerable -eq 0 ]; then
+    echo "  전반적으로 접근제어 설정이 적절히 되어 있습니다."
 fi
