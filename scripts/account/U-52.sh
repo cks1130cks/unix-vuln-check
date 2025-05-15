@@ -7,9 +7,8 @@ uids=$(awk -F: '$3 == 0 {print $1}' /etc/passwd)
 
 # UID 0을 가진 계정 중 root 외에 다른 계정이 존재하는지 확인
 if echo "$uids" | grep -v -w "root" > /dev/null; then
-    echo "U-52 점검 결과: 취약"
-    echo "취약한 계정 목록:"
+    echo "  [취약]취약한 계정 목록:"
     echo "$uids" | grep -v -w "root"
 else
-    echo "U-52 점검 결과: 양호"
+    echo "  [양호]"
 fi
