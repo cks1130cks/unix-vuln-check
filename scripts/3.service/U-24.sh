@@ -8,12 +8,8 @@ ps -ef | grep -E "nfs|statd|lockd" | grep -v grep > /tmp/u24_nfs_check.txt
 
 if [ -s /tmp/u24_nfs_check.txt ]; then
     echo "  [취약] NFS 관련 데몬이 실행 중입니다."
-    echo "  실행 중인 프로세스 목록 (일부):"
-    head -n 5 /tmp/u24_nfs_check.txt | sed 's/^/    - /'
-    count=$(wc -l < /tmp/u24_nfs_check.txt)
-    if [ "$count" -gt 5 ]; then
-        echo "    ... 총 $count개 실행 중 (최대 5개만 표시)"
-    fi
+    echo "  실행 중인 프로세스 목록:"
+    sed 's/^/    - /' /tmp/u24_nfs_check.txt  # 전부 출력
 else
     echo "  [양호] NFS 관련 데몬이 실행되고 있지 않습니다."
 fi
