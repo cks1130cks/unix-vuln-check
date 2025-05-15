@@ -4,11 +4,12 @@ echo "U-55: hosts.lpd 파일 소유자 및 권한 설정 점검"
 
 file="/etc/hosts.lpd"
 
+echo "  점검 파일: $file"
+
 if [ -e "$file" ]; then
     owner=$(stat -c %U "$file")
     perms=$(stat -c %a "$file")
 
-    echo "  점검 대상 파일: $file"
     echo "  현재 소유자: $owner"
     echo "  현재 권한: $perms"
 
