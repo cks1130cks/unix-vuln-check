@@ -14,6 +14,7 @@ fi
 
 upload_handler=$(grep -E "AddHandler.*cgi-script" "$CONF")
 allow_override=$(grep "AllowOverride None" "$CONF")
+limit_request_body=$(grep -i "^\s*LimitRequestBody" "$CONF" | tail -n 1)
 
 echo "  AddHandler 설정 (CGI 스크립트 실행 핸들러):"
 if [ -n "$upload_handler" ]; then
@@ -29,6 +30,28 @@ if [ -n "$allow_override" ]; then
     echo "    - 권한 변경이 제한되어 있습니다."
 else
     echo "    없음 (권한 변경 제한이 없습니다)"
+fi
+
+echo "  LimitRequestBody 설정 (파일 업로드 크기 제한):"
+if [ -n "$limit_request_body" ]; then
+    echo "    $limit_request_body"
+    # LimitRequestBody 값 추출 (숫자)
+    limit_value=$(echo "$limit_request_body" | awk '{print $2}')
+    if [[ "$limit_value" =~ ^[0-9]+$ ]]; then
+        if [ "$limit_value" -le "$MAX_SIZE" ]; then
+            echo "    - 5MB 이하로 제한되어 있어 적절합니다."
+            limit_flag=true
+        else
+            echo "    - 5MB 초과 제한값으로 설정되어 있어 취약할 수 있습니다."
+            limit_flag=false
+        fi
+    else
+        echo "    - LimitRequestBody 값이 숫자가 아닙니다. 설정 확인 필요."
+        limit_flag=false
+    fi
+else
+    echo "    없음 (파일 업로드 크기 제한이 설정되어 있지 않습니다.)"
+    limit_flag=false
 fi
 
 # 업로드 디렉터리 정책 점검
@@ -63,7 +86,7 @@ else
 fi
 
 # 최종 판단
-if [ -n "$upload_handler" ] && [ -z "$allow_override" ] && ! $large_files_flag && ! $invalid_files_flag ; then
+if [ -n "$upload_handler" ] && [ -z "$allow_override" ] && $limit_flag && ! $large_files_flag && ! $invalid_files_flag ; then
     echo "  [양호] 업로드 및 다운로드 제한 설정과 파일 정책이 적절히 적용되어 있습니다."
 else
     echo "  [취약] 업로드 및 다운로드 제한 또는 파일 정책이 미흡합니다."
