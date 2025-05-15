@@ -5,7 +5,10 @@ echo "U-54: Session Timeout (TMOUT) 설정 점검"
 # 점검 대상 파일들
 FILES=("/etc/profile" "/etc/bashrc" /etc/profile.d/*.sh)
 
-echo "  점검 대상 파일: ${FILES[*]}"
+echo "  점검 대상 파일:"
+for f in "${FILES[@]}"; do
+  echo "    $f"
+done
 
 # TMOUT 설정값들 중 최소값 추출
 tmout=$(grep -E '^TMOUT=' "${FILES[@]}" 2>/dev/null | awk -F= '{print $2}' | sort -n | head -1)
