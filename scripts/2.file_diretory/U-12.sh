@@ -8,9 +8,9 @@ if [ -f "$CHECK_FILE" ]; then
   FILE_OWNER=$(stat -c %U "$CHECK_FILE")
   FILE_PERM=$(stat -c %a "$CHECK_FILE")
 
-  echo "파일: $CHECK_FILE"
-  echo "소유자: $FILE_OWNER"
-  echo "권한: $FILE_PERM"
+  echo "  점검 대상 파일: $CHECK_FILE"
+  echo "  현재 소유자: $FILE_OWNER"
+  echo "  현재 권한: $FILE_PERM"
 
   if [ "$FILE_OWNER" = "root" ]; then
     if [ "$FILE_PERM" -le 644 ]; then
