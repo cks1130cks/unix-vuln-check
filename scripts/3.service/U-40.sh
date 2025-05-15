@@ -20,22 +20,25 @@ echo "  AddHandler 설정 (CGI 스크립트 실행 핸들러):"
 if [ -n "$upload_handler" ]; then
     echo "$upload_handler" | sed 's/^/    /'
     echo "    - CGI 스크립트 실행이 허용되어 있습니다."
+    upload_handler_flag=true
 else
     echo "    없음 (CGI 스크립트 실행 핸들러 설정 없음)"
+    upload_handler_flag=false
 fi
 
 echo "  AllowOverride 설정 (디렉토리 권한 재정의 제한):"
 if [ -n "$allow_override" ]; then
     echo "$allow_override" | sed 's/^/    /'
     echo "    - 권한 변경이 제한되어 있습니다."
+    allow_override_flag=true
 else
     echo "    없음 (권한 변경 제한이 없습니다)"
+    allow_override_flag=false
 fi
 
 echo "  LimitRequestBody 설정 (파일 업로드 크기 제한):"
 if [ -n "$limit_request_body" ]; then
     echo "    $limit_request_body"
-    # LimitRequestBody 값 추출 (숫자)
     limit_value=$(echo "$limit_request_body" | awk '{print $2}')
     if [[ "$limit_value" =~ ^[0-9]+$ ]]; then
         if [ "$limit_value" -le "$MAX_SIZE" ]; then
@@ -58,7 +61,6 @@ fi
 if [ -d "$UPLOAD_DIR" ]; then
     echo "  업로드 디렉터리 존재: $UPLOAD_DIR"
 
-    # 5MB 초과 파일 점검
     large_files=$(find "$UPLOAD_DIR" -type f -size +"$MAX_SIZE"c)
     if [ -n "$large_files" ]; then
         echo "  [취약] 5MB 초과 대용량 파일이 존재합니다:"
@@ -69,7 +71,6 @@ if [ -d "$UPLOAD_DIR" ]; then
         large_files_flag=false
     fi
 
-    # 확장자 화이트리스트 점검
     invalid_files=$(find "$UPLOAD_DIR" -type f ! \( $(printf -- "-iname '*.%s' -o " $ALLOWED_EXTENSIONS) -false \))
     if [ -n "$invalid_files" ]; then
         echo "  [취약] 허용되지 않은 확장자 파일이 존재합니다:"
@@ -85,9 +86,28 @@ else
     invalid_files_flag=false
 fi
 
-# 최종 판단
-if [ -n "$upload_handler" ] && [ -z "$allow_override" ] && $limit_flag && ! $large_files_flag && ! $invalid_files_flag ; then
-    echo "  [양호] 업로드 및 다운로드 제한 설정과 파일 정책이 적절히 적용되어 있습니다."
+# 각 항목별 종합 상태 출력
+echo
+if $upload_handler_flag && ! $allow_override_flag; then
+    echo "  [취약] CGI 스크립트 실행이 허용되고 권한 변경 제한이 없어 업로드/다운로드 제한이 미흡합니다."
 else
-    echo "  [취약] 업로드 및 다운로드 제한 또는 파일 정책이 미흡합니다."
+    echo "  [양호] CGI 스크립트 실행 및 권한 변경 제한 설정이 적절합니다."
+fi
+
+if $limit_flag; then
+    echo "  [양호] LimitRequestBody 설정이 적절합니다."
+else
+    echo "  [취약] LimitRequestBody 설정이 없거나 5MB 초과로 설정되어 있습니다."
+fi
+
+if ! $large_files_flag; then
+    echo "  [양호] 업로드 디렉터리에 5MB 초과 대용량 파일이 없습니다."
+else
+    echo "  [취약] 업로드 디렉터리에 5MB 초과 대용량 파일이 존재합니다."
+fi
+
+if ! $invalid_files_flag; then
+    echo "  [양호] 업로드 디렉터리에 허용된 확장자 파일만 존재합니다."
+else
+    echo "  [취약] 업로드 디렉터리에 허용되지 않은 확장자 파일이 존재합니다."
 fi
