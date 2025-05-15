@@ -1,9 +1,10 @@
-#!/bin/bash
-echo "[U-15] World Writable 파일 점검"
-find / -type f -perm -0002 -exec ls -l {} \; > /tmp/U15_world_writable.txt 2>/dev/null
-if [ -s /tmp/U15_world_writable.txt ]; then
-  echo "결과: 취약 (World Writable 파일 존재)"
-  cat /tmp/U15_world_writable.txt
+echo "U-15: 불필요한 world writable 파일 존재 여부 점검"
+
+output=$(find / -xdev -type f -perm -002 ! -perm -1000 2>/dev/null)
+
+if [ -z "$output" ]; then
+    echo "  [양호] 불필요한 world writable 파일이 존재하지 않습니다."
 else
-  echo "결과: 양호 (World Writable 파일 없음)"
+    echo "  [취약] 다음과 같은 불필요한 world writable 파일이 존재합니다:"
+    echo "$output"
 fi
