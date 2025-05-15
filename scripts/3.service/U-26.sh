@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "U-27: 불필요한 RPC 서비스 실행 여부 점검"
+echo "U-26: 불필요한 RPC 서비스 실행 여부 점검"
 
 # 점검할 RPC 서비스 목록 (취약점 보고서에 명시된 서비스)
 RPC_SERVICES=(
