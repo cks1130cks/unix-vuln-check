@@ -10,13 +10,13 @@ for dir in /home/*; do
     user=$(basename "$dir")
     owner=$(stat -c %U "$dir")
     perms=$(stat -c %a "$dir")
-    others_write=$(( (perms % 10) & 2 ))
 
     echo "  점검 파일: $dir"
-    echo "    현재 소유자: $owner"
-    echo "    현재 권한: $perms"
+    echo "    현재 소유자 : $owner"
+    echo "    현재 권한 : $perms"
 
-    if [ "$owner" != "$user" ] || [ "$others_write" -eq 2 ]; then
+    if [ "$owner" != "$user" ] || [[ "$perms" =~ [027]$ ]]; then
+        # others_write 권한 체크를 권한 마지막 자릿수에서 2(쓰기) or 7(쓰기+실행) 등이 있으면 취약 판단
         echo "  [취약] $dir → 소유자와 권한에 문제 있음"
         result="취약"
     fi
