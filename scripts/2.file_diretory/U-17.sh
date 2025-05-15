@@ -2,6 +2,10 @@
 
 echo "U-17: 사용자 홈 디렉터리 내 .rhosts 파일 및 /etc/hosts.equiv 사용 금지 점검"
 
+echo "  점검 파일:"
+echo "    $HOME/.rhosts"
+echo "    /etc/hosts.equiv"
+
 FILES=("$HOME/.rhosts" "/etc/hosts.equiv")
 
 for FILE in "${FILES[@]}"; do
