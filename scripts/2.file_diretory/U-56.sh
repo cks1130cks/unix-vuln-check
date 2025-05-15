@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "===== U-56: UMASK 설정 점검 ====="
+echo "U-56: UMASK 설정 점검"
 
 # 점검 대상 파일
 FILE="/etc/profile"
