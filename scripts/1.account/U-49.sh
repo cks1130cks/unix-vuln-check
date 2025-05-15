@@ -1,9 +1,15 @@
 #!/bin/bash
-echo "U-49: 불필요한 계정 제거"
-EXTRA_USERS=$(awk -F: '  $3 >= 1000 && $1 != "nobody" && $7 != "/sbin/nologin" && $7 != "/bin/false"' /etc/passwd)
-if [ -n "$EXTRA_USERS" ]; then
-    echo "  [취약] (불필요한 계정 존재 가능)"
-    echo "$EXTRA_USERS"
+echo "U-19: finger 서비스 비활성화 점검"
+
+FILE="/etc/xinetd.d/finger"
+
+if [ -f "$FILE" ]; then
+  DISABLE=$(grep -i '^disable' "$FILE" | awk '{print $3}')
+  if [ "$DISABLE" == "no" ]; then
+    echo "  [취약] finger 서비스가 활성화 되어 있음 (disable = no)"
+  else
+    echo "  [양호] finger 서비스가 비활성화 되어 있음 (disable = yes 또는 설정 없음)"
+  fi
 else
-    echo "  [양호] (불필요한 계정 없음)"
+  echo "  [양호] finger 서비스 설정 파일 없음"
 fi
