@@ -13,6 +13,7 @@ run_scripts_in_dir() {
     for script in "$dir"/*.sh; do
         if [ -f "$script" ]; then
             bash "$script"
+            echo
         fi
     done
 }
@@ -20,7 +21,6 @@ run_scripts_in_dir() {
 # 하위 디렉토리 순회
 for subdir in "$BASE_DIR"/*/; do
     run_scripts_in_dir "$subdir"
-    echo
 done
 
 echo "✅ 모든 스크립트 실행 완료."
