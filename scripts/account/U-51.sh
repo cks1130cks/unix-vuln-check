@@ -9,7 +9,7 @@ ALLOWED_GROUPS=(
   "shadow" "utmp" "video" "games" "users" "nogroup"
   "mem" "cdrom" "dialout" "floppy" "tape" "ftp" "lock" "audio" "nobody" "utempter"
   "avahi-autoipd" "ssh_keys" "input" "systemd-journal" "systemd-bus-proxy" "systemd-network"
-  "dbus" "polkitd" "tss" "postdrop" "postfix" "sshd" "wins" "rpc" "rpcuser" "nfsnobody"
+  "dbus" "polkitd" "tss" "postdrop" "postfix" "sshd" "rpc" "rpcuser" "nfsnobody"
   "saslauth" "mailnull" "smmsp" "apache"
 )
 result="양호"
