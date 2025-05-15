@@ -16,9 +16,9 @@ if [ "$SSH_STATUS" = "active" ]; then
 
     if [[ -z "$PERMIT_SETTING" ]]; then
       if [[ -n "$PERMIT_SETTING_COMMENTED" ]]; then
-        echo "  [정보] PermitRootLogin 설정은 존재하나 주석 처리되어 있습니다."
+        echo "  [취약] PermitRootLogin 설정은 존재하나 주석 처리되어 있습니다."
         echo "         주석 처리된 설정 내용: $PERMIT_SETTING_COMMENTED"
-        echo "         기본값은 'yes'일 수 있으니 확인이 필요합니다."
+        echo "         기본값은 'yes'일 수 있으니 root 원격 접속 허용 위험이 있습니다."
       else
         echo "  [취약] PermitRootLogin 설정이 존재하지 않습니다. (기본값: yes일 수 있음)"
         echo "         root 계정의 원격 접속이 허용될 가능성이 있습니다."
