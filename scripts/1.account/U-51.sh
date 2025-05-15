@@ -25,7 +25,6 @@ while IFS=: read -r group_name _; do
     fi
 done < "$GROUP_FILE"
 
-echo "  최종 결과: [$result]"
 
 if [ "$result" = "취약" ]; then
   echo "  참고: 불필요한 그룹은 시스템 보안 및 관리 복잡도를 증가시킬 수 있습니다."
