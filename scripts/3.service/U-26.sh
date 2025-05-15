@@ -61,5 +61,3 @@ for svc in "${RPC_SERVICES[@]}"; do
     echo "  [취약] $svc 프로세스가 실행 중임"
   fi
 done
-
-echo "점검 완료."
