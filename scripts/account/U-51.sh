@@ -10,7 +10,7 @@ ALLOWED_GROUPS=(
   "mem" "cdrom" "dialout" "floppy" "tape" "ftp" "lock" "audio" "nobody" "utempter"
   "avahi-autoipd" "ssh_keys" "input" "systemd-journal" "systemd-bus-proxy" "systemd-network"
   "dbus" "polkitd" "tss" "postdrop" "postfix" "sshd" "rpc" "rpcuser" "nfsnobody"
-  "saslauth" "mailnull" "smmsp" "apache"
+  "saslauth" "mailnull" "smmsp" "apache" "wins"
 )
 result="양호"
 while IFS=: read -r group_name _; do
