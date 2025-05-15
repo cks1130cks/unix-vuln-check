@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "U-34: DNS Zone Transfer 제한 설정 확인"
-echo "  점검 파일: named.conf (최초 발견 파일)"
+echo "  점검 파일: named.conf"
 
 ZONE_FILE=$(find / -name named.conf 2>/dev/null | head -n 1)
 
