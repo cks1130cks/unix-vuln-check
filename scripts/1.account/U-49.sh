@@ -1,24 +1,32 @@
 #!/bin/bash
 
-echo "U-49: finger 서비스 비활성화 점검"
+echo "U-49: 불필요한 계정 제거 점검"
 
-FINGER_CONFIG="/etc/xinetd.d/finger"
-echo "  점검 파일: $FINGER_CONFIG"
+PASSWD_FILE="/etc/passwd"
 
-if [ -f "$FINGER_CONFIG" ]; then
-  # disable 항목의 값 추출
-  DISABLE=$(grep -i '^disable' "$FINGER_CONFIG" | awk '{print $3}')
-  
-  if [ "$DISABLE" == "no" ]; then
-    echo "  [취약] finger 서비스가 활성화되어 있습니다. (disable = no)"
-    echo "         finger 서비스는 사용자 계정 정보를 노출시킬 수 있어 보안상 위험합니다."
-    echo "         /etc/xinetd.d/finger 파일에서 'disable = yes'로 설정하거나 해당 파일을 삭제해야 합니다."
-  elif [ "$DISABLE" == "yes" ]; then
-    echo "  [양호] finger 서비스가 비활성화되어 있습니다. (disable = yes)"
-  else
-    echo "  [정보] disable 설정이 명확하지 않습니다. (disable = $DISABLE)"
-  fi
-else
-  echo "  [양호] finger 서비스 설정 파일이 존재하지 않습니다."
-  echo "         서비스가 설치되지 않았거나 비활성화된 것으로 판단됩니다."
+echo "  점검 파일: $PASSWD_FILE"
+if [ ! -f "$PASSWD_FILE" ]; then
+    echo "  [정보] /etc/passwd 파일이 존재하지 않습니다. 점검 대상이 아닙니다."
+    exit 0
 fi
+
+echo
+echo "  [/etc/passwd 파일 내용]"
+echo "  (ㄱ) 시스템 사용자인데 로그인 가능한 쉘이 할당된 경우 점검"
+echo "  (ㄴ) 일반 사용자 중 최근 1년간 로그인 기록이 없는 사용자 점검"
+cat "$PASSWD_FILE"
+
+echo
+echo "  [lastlog 명령어 출력 내용]"
+echo "  (ㄱ) 최근 1년간 로그인하지 않은 사용자 점검"
+echo "  (ㄴ) 점검 후 고객과 상의 필요"
+lastlog
+
+echo
+echo "  [su 명령어 실패 시도 기록 (/var/log/secure)]"
+echo "  (ㄱ) su 인증 실패가 빈번한 사용자 점검 (일 20회 이상)"
+echo "  (ㄴ) 일반 사용자가 root로 전환 시도하는 경우 집중 점검"
+grep 'su: pam_unix(su-l:auth): authentication failure' /var/log/secure || echo "  관련 기록이 없습니다."
+
+echo
+echo "  점검 완료. 위 내용을 바탕으로 불필요한 계정 존재 여부를 확인하세요."
