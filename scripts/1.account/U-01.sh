@@ -9,12 +9,20 @@ echo "  SSH 서비스 상태: $SSH_STATUS"
 
 if [ "$SSH_STATUS" = "active" ]; then
   if [ -f "$SSHD_CONFIG" ]; then
-    # 주석과 공백 제외 후 PermitRootLogin 설정 확인
-    PERMIT_SETTING=$(grep -iE '^\s*PermitRootLogin' "$SSHD_CONFIG" | tail -n 1)
+    # PermitRootLogin 설정 중 주석 처리되지 않은 마지막 줄 추출
+    PERMIT_SETTING=$(grep -iE '^\s*PermitRootLogin' "$SSHD_CONFIG" | grep -v '^\s*#' | tail -n 1)
+    # PermitRootLogin 설정 중 주석 처리된 마지막 줄 추출
+    PERMIT_SETTING_COMMENTED=$(grep -iE '^\s*#\s*PermitRootLogin' "$SSHD_CONFIG" | tail -n 1)
 
     if [[ -z "$PERMIT_SETTING" ]]; then
-      echo "  [취약] PermitRootLogin 설정이 존재하지 않습니다. (기본값: yes일 수 있음)"
-      echo "         root 계정의 원격 접속이 허용될 가능성이 있습니다."
+      if [[ -n "$PERMIT_SETTING_COMMENTED" ]]; then
+        echo "  [정보] PermitRootLogin 설정은 존재하나 주석 처리되어 있습니다."
+        echo "         주석 처리된 설정 내용: $PERMIT_SETTING_COMMENTED"
+        echo "         기본값은 'yes'일 수 있으니 확인이 필요합니다."
+      else
+        echo "  [취약] PermitRootLogin 설정이 존재하지 않습니다. (기본값: yes일 수 있음)"
+        echo "         root 계정의 원격 접속이 허용될 가능성이 있습니다."
+      fi
     else
       VALUE=$(echo "$PERMIT_SETTING" | awk '{print $2}' | tr -d '[:space:]')
       case "$VALUE" in
