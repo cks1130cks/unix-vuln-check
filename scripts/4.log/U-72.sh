@@ -27,17 +27,17 @@ for conf_file in "${config_files[@]}"; do
 
         for pattern in "${required_patterns[@]}"; do
             if grep -vE '^\s*#' "$conf_file" | grep -q "$pattern"; then
-                echo "    [양호] '$pattern' 설정이 존재합니다."
+                echo "    [양호] '$pattern' 설정이 $conf_file 파일에 존재합니다."
                 ((found_count++))
             else
-                echo "    [취약] '$pattern' 설정이 누락되었습니다."
+                echo "    [취약] '$pattern' 설정이 $conf_file 파일에 없습니다."
             fi
         done
 
         if [ $found_count -eq ${#required_patterns[@]} ]; then
-            echo "  [양호] 로그 정책이 모두 적용되어 있습니다."
+            echo "  [양호] 로그 정책이 모두 적용되어 있습니다. (점검 파일: $conf_file)"
         else
-            echo "  [취약] 로그 정책이 일부 누락되어 있습니다."
+            echo "  [취약] 로그 정책이 일부 누락되어 있습니다. (점검 파일: $conf_file)"
         fi
 
         log_config_found="yes"
