@@ -32,5 +32,3 @@ if [ -n "$EVERYONE_SHARES" ]; then
 else
   echo "  [양호] everyone(*) 공유 설정이 없습니다."
 fi
-
-echo "점검 완료."
